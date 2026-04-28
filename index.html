@@ -1,0 +1,694 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Georgia', serif; background: var(--color-background-tertiary); }
+
+  .cedula-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 1rem;
+    font-family: 'Arial Narrow', Arial, sans-serif;
+    font-size: 13px;
+  }
+
+  .onpe-header {
+    background: #CC2229;
+    color: white;
+    text-align: center;
+    padding: 10px 16px;
+    border-radius: 6px 6px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .onpe-logo {
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 2px;
+  }
+  .onpe-title {
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 1px;
+  }
+  .onpe-subtitle {
+    font-size: 11px;
+    opacity: 0.9;
+  }
+  .escudo {
+    width: 44px;
+    height: 44px;
+  }
+
+  .cedula-body {
+    background: #fffdf5;
+    border: 2px solid #888;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    overflow: hidden;
+  }
+
+  .voter-section {
+    background: #f0f0f0;
+    border-bottom: 2px solid #ccc;
+    padding: 10px 16px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .voter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .voter-label {
+    font-size: 10px;
+    font-weight: bold;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .voter-input {
+    border: 1px solid #999;
+    background: white;
+    padding: 4px 8px;
+    font-size: 13px;
+    border-radius: 3px;
+    width: 100%;
+    color: var(--color-text-primary);
+  }
+  .voter-input:focus { outline: 2px solid #CC2229; }
+
+  .section-header {
+    background: #CC2229;
+    color: white;
+    text-align: center;
+    padding: 6px 12px;
+    font-weight: bold;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .section-rule {
+    font-size: 10px;
+    font-weight: normal;
+    background: rgba(0,0,0,0.2);
+    padding: 2px 8px;
+    border-radius: 10px;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  .candidates-grid {
+    padding: 8px 12px;
+  }
+  .candidate-row {
+    display: grid;
+    grid-template-columns: 28px 40px 1fr 80px 40px;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 8px;
+    border-bottom: 1px solid #e0e0e0;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .candidate-row:hover { background: #fff8e1; }
+  .candidate-row.selected { background: #fff3cd; border-color: #f5a623; }
+  .candidate-row.special { background: #f5f5f5; color: #888; font-style: italic; }
+  .candidate-row.selected.special { background: #ffe0e0; border-color: #CC2229; }
+
+  .cand-num { font-weight: bold; color: #CC2229; text-align: center; font-size: 12px; }
+  .cand-logo {
+    width: 36px; height: 36px;
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    border: 1px solid #ddd;
+    background: white;
+  }
+  .cand-info { display: flex; flex-direction: column; }
+  .cand-party { font-weight: bold; font-size: 12px; color: var(--color-text-primary); }
+  .cand-names { font-size: 11px; color: #666; }
+  .cand-photo {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    background: #e8e8e8;
+    border: 1px solid #ccc;
+  }
+  .cand-check {
+    width: 28px; height: 28px;
+    border: 2px solid #999;
+    border-radius: 3px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto;
+    background: white;
+    flex-shrink: 0;
+  }
+  .cand-check.checked {
+    background: #CC2229;
+    border-color: #CC2229;
+    color: white;
+    font-weight: bold;
+  }
+
+  .blanco-nulo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 6px 12px;
+    background: #f9f9f9;
+    border-top: 1px solid #ddd;
+  }
+  .special-opt {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    background: white;
+    transition: background 0.15s;
+  }
+  .special-opt:hover { background: #f5f5f5; }
+  .special-opt.selected { background: #fff3cd; border-color: #f5a623; }
+  .special-label { font-size: 12px; font-weight: bold; text-transform: uppercase; color: #555; }
+
+  .col-headers {
+    display: grid;
+    grid-template-columns: 28px 40px 1fr 80px 40px;
+    gap: 6px;
+    padding: 4px 8px;
+    background: #f0f0f0;
+    border-bottom: 1px solid #ccc;
+    font-size: 10px;
+    font-weight: bold;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 12px;
+    border-radius: 3px;
+  }
+
+  .sub-header {
+    background: #f5a623;
+    color: white;
+    padding: 5px 12px;
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .error-msg {
+    background: #fff0f0;
+    border: 1px solid #ffcccc;
+    color: #CC2229;
+    padding: 6px 12px;
+    font-size: 12px;
+    margin: 4px 12px;
+    border-radius: 4px;
+    display: none;
+  }
+  .error-msg.show { display: block; }
+
+  .submit-zone {
+    padding: 16px 12px;
+    background: #f0f0f0;
+    border-top: 2px solid #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .resumen {
+    font-size: 12px;
+    color: #555;
+    flex: 1;
+  }
+  .btn-submit {
+    background: #CC2229;
+    color: white;
+    border: none;
+    padding: 12px 32px;
+    font-size: 15px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .btn-submit:hover { background: #a01820; }
+  .btn-submit:active { transform: scale(0.98); }
+  .btn-submit:disabled { background: #ccc; cursor: not-allowed; }
+
+  .btn-reset {
+    background: white;
+    color: #CC2229;
+    border: 2px solid #CC2229;
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: background 0.15s;
+  }
+  .btn-reset:hover { background: #fff0f0; }
+
+  .modal-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.6);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal-box {
+    background: white;
+    border-radius: 10px;
+    padding: 32px;
+    max-width: 480px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+  }
+  .modal-icon { font-size: 48px; margin-bottom: 12px; }
+  .modal-title { font-size: 20px; font-weight: bold; color: #CC2229; margin-bottom: 8px; }
+  .modal-body { font-size: 14px; color: #555; margin-bottom: 20px; line-height: 1.6; }
+  .modal-detail { background: #f9f9f9; border-radius: 6px; padding: 12px; margin: 12px 0; text-align: left; font-size: 13px; }
+  .modal-detail-row { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid #eee; }
+  .modal-detail-row:last-child { border-bottom: none; }
+  .modal-btn { background: #CC2229; color: white; border: none; padding: 12px 32px; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 8px; }
+  .modal-btn:hover { background: #a01820; }
+
+  .progress-bar {
+    height: 6px;
+    background: #e0e0e0;
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 8px 0;
+  }
+  .progress-fill {
+    height: 100%;
+    background: #CC2229;
+    border-radius: 3px;
+    transition: width 0.3s;
+  }
+
+  .tag-obligatorio {
+    font-size: 10px;
+    background: #CC2229;
+    color: white;
+    padding: 1px 6px;
+    border-radius: 8px;
+    margin-left: 6px;
+  }
+  .tag-opcional {
+    font-size: 10px;
+    background: #888;
+    color: white;
+    padding: 1px 6px;
+    border-radius: 8px;
+    margin-left: 6px;
+  }
+
+  @media (max-width: 600px) {
+    .voter-section { grid-template-columns: 1fr 1fr; }
+    .candidate-row { grid-template-columns: 24px 32px 1fr 60px 32px; }
+    .col-headers { grid-template-columns: 24px 32px 1fr 60px 32px; }
+  }
+</style>
+
+<div class="cedula-wrapper">
+  <div class="onpe-header">
+    <svg class="escudo" viewBox="0 0 60 60" fill="none">
+      <circle cx="30" cy="30" r="28" fill="white" opacity="0.15"/>
+      <text x="30" y="38" text-anchor="middle" fill="white" font-size="22" font-weight="bold">🇵🇪</text>
+    </svg>
+    <div style="text-align:center">
+      <div class="onpe-title">CÉDULA DE SUFRAGIO</div>
+      <div class="onpe-subtitle">LIMA METROPOLITANA — ELECCIONES GENERALES 2026</div>
+    </div>
+    <div class="onpe-logo">ONPE</div>
+  </div>
+
+  <div class="cedula-body">
+    <!-- DATOS DEL VOTANTE -->
+    <div class="voter-section">
+      <div class="voter-field" style="grid-column: span 1">
+        <label class="voter-label">DNI <span class="tag-obligatorio">obligatorio</span></label>
+        <input class="voter-input" id="dni" type="text" maxlength="8" placeholder="00000000" oninput="validarDNI(this)">
+      </div>
+      <div class="voter-field" style="grid-column: span 2">
+        <label class="voter-label">Nombres</label>
+        <input class="voter-input" id="nombres" type="text" maxlength="50" placeholder="Nombres completos">
+      </div>
+      <div class="voter-field">
+        <label class="voter-label">Apellido Paterno</label>
+        <input class="voter-input" id="apaterno" type="text" maxlength="30" placeholder="Apellido paterno">
+      </div>
+      <div class="voter-field">
+        <label class="voter-label">Apellido Materno</label>
+        <input class="voter-input" id="amaterno" type="text" maxlength="30" placeholder="Apellido materno">
+      </div>
+      <div class="voter-field">
+        <label class="voter-label">Grupo de Votación</label>
+        <input class="voter-input" id="grupo" type="text" maxlength="6" placeholder="XXXXXX">
+      </div>
+    </div>
+
+    <!-- PRESIDENTE Y VICEPRESIDENTE -->
+    <div class="section-header">
+      <span>Presidente y Vicepresidente</span>
+      <span class="section-rule">Marcar solo 1 opción</span>
+    </div>
+    <div style="padding: 4px 12px 0; font-size: 11px; color: #888;">Por defecto: BLANCO — No se puede marcar más de una opción</div>
+    <div class="col-headers">
+      <span>N°</span><span>Partido</span><span>Candidatos</span><span>VP / Fórmula</span><span>Voto</span>
+    </div>
+    <div class="candidates-grid" id="presidentes-list"></div>
+    <div class="blanco-nulo" id="pres-especiales">
+      <div class="special-opt" id="pres-blanco" onclick="seleccionarEspecial('presidente','BLANCO')">
+        <div class="cand-check checked" id="chk-pres-BLANCO">✓</div>
+        <span class="special-label">Voto en Blanco</span>
+        <span style="font-size:10px;color:#aaa;margin-left:auto">(por defecto)</span>
+      </div>
+      <div class="special-opt" id="pres-nulo" onclick="seleccionarEspecial('presidente','NULO')">
+        <div class="cand-check" id="chk-pres-NULO"></div>
+        <span class="special-label">Voto Nulo</span>
+      </div>
+    </div>
+
+    <!-- SENADORES NACIONAL -->
+    <div class="section-header">
+      <span>Senadores — Partido Nacional</span>
+      <span class="section-rule">Hasta 2 candidatos</span>
+    </div>
+    <div class="sub-header">Partido Nacional</div>
+    <div class="col-headers">
+      <span>N°</span><span>Partido</span><span>Candidato</span><span>Cargo</span><span>Voto</span>
+    </div>
+    <div class="candidates-grid" id="senadores-nacional-list"></div>
+    <div class="error-msg" id="err-senadores-nacional">Máximo 2 candidatos para Senadores Nacional</div>
+
+    <div class="sub-header">Partido Local</div>
+    <div class="col-headers">
+      <span>N°</span><span>Partido</span><span>Candidato</span><span>Cargo</span><span>Voto</span>
+    </div>
+    <div class="candidates-grid" id="senadores-local-list"></div>
+    <div class="error-msg" id="err-senadores-local">Máximo 2 candidatos para Senadores Local</div>
+
+    <!-- DIPUTADOS -->
+    <div class="section-header">
+      <span>Diputados — Universo</span>
+      <span class="section-rule">Hasta 2 candidatos</span>
+    </div>
+    <div class="col-headers">
+      <span>N°</span><span>Partido</span><span>Candidato</span><span>Cargo</span><span>Voto</span>
+    </div>
+    <div class="candidates-grid" id="diputados-list"></div>
+    <div class="error-msg" id="err-diputados">Máximo 2 candidatos para Diputados</div>
+
+    <!-- PARLAMENTO ANDINO -->
+    <div class="section-header">
+      <span>Parlamento Andino</span>
+      <span class="section-rule">1 partido</span>
+    </div>
+    <div class="col-headers">
+      <span>N°</span><span>Partido</span><span>Lista</span><span>Número</span><span>Voto</span>
+    </div>
+    <div class="candidates-grid" id="parlamento-list"></div>
+
+    <!-- PROGRESO Y ENVÍO -->
+    <div class="submit-zone">
+      <div class="resumen">
+        <div style="font-weight:bold;margin-bottom:4px;color:var(--color-text-primary)">Resumen de votos</div>
+        <div id="resumen-texto" style="line-height:1.7"></div>
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+        <div id="progress-label" style="font-size:11px;color:#888">0 de 4 secciones completadas</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+        <button class="btn-submit" id="btn-enviar" onclick="enviarVoto()">EMITIR VOTO</button>
+        <button class="btn-reset" onclick="resetearTodo()">Borrar selección</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CONFIRMACIÓN -->
+<div class="modal-overlay" id="modal-confirmar">
+  <div class="modal-box">
+    <div class="modal-icon">🗳️</div>
+    <div class="modal-title">Confirmar su voto</div>
+    <div class="modal-body">Revise su selección antes de emitir el voto. Esta acción no se puede deshacer.</div>
+    <div class="modal-detail" id="modal-detalle"></div>
+    <div style="display:flex;gap:12px;justify-content:center;margin-top:16px">
+      <button onclick="cerrarModal()" style="background:white;border:2px solid #ccc;padding:10px 24px;border-radius:6px;cursor:pointer;font-size:14px;">Corregir</button>
+      <button class="modal-btn" onclick="confirmarVoto()">Confirmar y Emitir</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ÉXITO -->
+<div class="modal-overlay" id="modal-exito">
+  <div class="modal-box">
+    <div class="modal-icon">✅</div>
+    <div class="modal-title" style="color:#2e7d32">Voto emitido exitosamente</div>
+    <div class="modal-body">Su voto ha sido registrado. Se guardará en la base de datos de manera encriptada y anónima.<br><br><strong>Código de verificación:</strong><br><span id="codigo-verificacion" style="font-family:monospace;font-size:18px;color:#CC2229;font-weight:bold;letter-spacing:2px"></span></div>
+    <button class="modal-btn" style="background:#2e7d32" onclick="cerrarExito()">Finalizar</button>
+  </div>
+</div>
+
+<script>
+const PARTIDOS = [
+  { id:1, emoji:'🦅', nombre:'Fuerza Popular', color:'#f5a623' },
+  { id:2, emoji:'🌊', nombre:'Perú Libre', color:'#CC2229' },
+  { id:3, emoji:'⭐', nombre:'Alianza para el Progreso', color:'#1565c0' },
+  { id:4, emoji:'🌿', nombre:'Renovación Popular', color:'#2e7d32' },
+  { id:5, emoji:'🏔️', nombre:'Acción Popular', color:'#f4511e' },
+  { id:6, emoji:'🌟', nombre:'Partido Morado', color:'#7b1fa2' },
+  { id:7, emoji:'🦁', nombre:'Somos Perú', color:'#00838f' },
+  { id:8, emoji:'🌺', nombre:'Podemos Perú', color:'#e91e63' },
+];
+
+const PRESIDENTES = [
+  { num:1, partido:1, pres:'Carlos Quispe Mamani', vice:'Ana Torres López' },
+  { num:2, partido:2, pres:'María Condori Ccoa', vice:'Juan Flores Quispe' },
+  { num:3, partido:3, pres:'Roberto Silva Paredes', vice:'Lucía Vega Montoya' },
+  { num:4, partido:4, pres:'Elena Huanca Rivera', vice:'Pedro Castro Ramos' },
+  { num:5, partido:5, pres:'Jorge Mendoza Pinto', vice:'Rosa Apaza Mamani' },
+  { num:6, partido:6, pres:'Carmen Lazo Delgado', vice:'Antonio Rivas Cruz' },
+];
+
+const SENADORES_NAC = [
+  { num:1, partido:1, nombre:'Luis Quispe Rojas', cargo:'Senador Nacional' },
+  { num:2, partido:2, nombre:'Martha Ccoa Huanca', cargo:'Senador Nacional' },
+  { num:3, partido:3, nombre:'Víctor Paredes Soto', cargo:'Senador Nacional' },
+  { num:4, partido:4, nombre:'Gloria Torres Mamani', cargo:'Senador Nacional' },
+  { num:5, partido:5, nombre:'Ricardo Flores Pinto', cargo:'Senador Nacional' },
+  { num:6, partido:6, nombre:'Sonia Castro Ramos', cargo:'Senador Nacional' },
+];
+
+const SENADORES_LOCAL = [
+  { num:1, partido:7, nombre:'Hugo Vega Apaza', cargo:'Senador Local Lima' },
+  { num:2, partido:8, nombre:'Diana Silva Cruz', cargo:'Senador Local Lima' },
+  { num:3, partido:1, nombre:'César Mendoza Lazo', cargo:'Senador Local Lima' },
+  { num:4, partido:3, nombre:'Patricia Rivas Condori', cargo:'Senador Local Lima' },
+  { num:5, partido:5, nombre:'Ernesto Huanca Delgado', cargo:'Senador Local Lima' },
+];
+
+const DIPUTADOS = [
+  { num:1, partido:2, nombre:'Félix Quispe Ccoa', cargo:'Diputado Universo' },
+  { num:2, partido:4, nombre:'Claudia Rojas Mamani', cargo:'Diputado Universo' },
+  { num:3, partido:6, nombre:'Andrés Torres Huanca', cargo:'Diputado Universo' },
+  { num:4, partido:1, nombre:'Milagros Flores Soto', cargo:'Diputado Universo' },
+  { num:5, partido:3, nombre:'Gabriel Paredes Vega', cargo:'Diputado Universo' },
+  { num:6, partido:7, nombre:'Natalia Castro Apaza', cargo:'Diputado Universo' },
+];
+
+const PARLAMENTO = [
+  { num:1, partido:1, lista:'Lista 1 — Integración Regional', numero:'001' },
+  { num:2, partido:3, lista:'Lista 2 — Unidad Andina', numero:'002' },
+  { num:3, partido:5, lista:'Lista 3 — Ciudadanos del Ande', numero:'003' },
+  { num:4, partido:7, lista:'Lista 4 — Solidaridad Andina', numero:'004' },
+];
+
+let votos = {
+  presidente: 'BLANCO',
+  senadoresNacional: [],
+  senadoresLocal: [],
+  diputados: [],
+  parlamento: null,
+};
+
+function getPartido(id) { return PARTIDOS.find(p=>p.id===id)||{}; }
+
+function logoPartido(p) {
+  return `<div class="cand-logo" style="background:${p.color||'#eee'}20;border-color:${p.color||'#ccc'}">${p.emoji||'🏛️'}</div>`;
+}
+
+function renderPresidentes() {
+  const el = document.getElementById('presidentes-list');
+  el.innerHTML = PRESIDENTES.map(c => {
+    const p = getPartido(c.partido);
+    const sel = votos.presidente === c.num;
+    return `<div class="candidate-row${sel?' selected':''}" onclick="seleccionarPresidente(${c.num})">
+      <span class="cand-num">${c.num}</span>
+      ${logoPartido(p)}
+      <div class="cand-info">
+        <span class="cand-party">${p.nombre||'Partido'}</span>
+        <span class="cand-names">Pres: ${c.pres} / VP: ${c.vice}</span>
+      </div>
+      <div class="cand-photo">${p.emoji||'👤'}</div>
+      <div class="cand-check${sel?' checked':''}">${sel?'✓':''}</div>
+    </div>`;
+  }).join('');
+  ['BLANCO','NULO'].forEach(v => {
+    const el2 = document.getElementById('chk-pres-'+v);
+    const row = document.getElementById('pres-'+v.toLowerCase());
+    const sel = votos.presidente === v;
+    if(el2){ el2.className = 'cand-check'+(sel?' checked':''); el2.textContent = sel?'✓':''; }
+    if(row){ row.className = 'special-opt'+(sel?' selected':''); }
+  });
+}
+
+function renderLista(listData, containerId, votosArr, maxSel, errId, onClickFn) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = listData.map(c => {
+    const p = getPartido(c.partido);
+    const sel = votosArr.includes(c.num);
+    return `<div class="candidate-row${sel?' selected':''}" onclick="${onClickFn}(${c.num})">
+      <span class="cand-num">${c.num}</span>
+      ${logoPartido(p)}
+      <div class="cand-info">
+        <span class="cand-party">${p.nombre||'Partido'}</span>
+        <span class="cand-names">${c.nombre||c.lista||''}</span>
+      </div>
+      <div style="font-size:10px;color:#888;text-align:center">${c.cargo||c.numero||''}</div>
+      <div class="cand-check${sel?' checked':''}">${sel?'✓':''}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderTodo() {
+  renderPresidentes();
+  renderLista(SENADORES_NAC, 'senadores-nacional-list', votos.senadoresNacional, 2, 'err-senadores-nacional', 'seleccionarSenNac');
+  renderLista(SENADORES_LOCAL, 'senadores-local-list', votos.senadoresLocal, 2, 'err-senadores-local', 'seleccionarSenLoc');
+  renderLista(DIPUTADOS, 'diputados-list', votos.diputados, 2, 'err-diputados', 'seleccionarDip');
+  renderLista(PARLAMENTO, 'parlamento-list', votos.parlamento?[votos.parlamento]:[], 1, null, 'seleccionarParlamento');
+  actualizarResumen();
+}
+
+function seleccionarPresidente(num) {
+  votos.presidente = num;
+  renderTodo();
+}
+function seleccionarEspecial(sec, val) {
+  if(sec==='presidente') { votos.presidente = val; renderTodo(); }
+}
+function toggleLista(arr, num, max, errId) {
+  const idx = arr.indexOf(num);
+  if(idx>=0) { arr.splice(idx,1); document.getElementById(errId).classList.remove('show'); }
+  else if(arr.length < max) { arr.push(num); }
+  else { document.getElementById(errId).classList.add('show'); setTimeout(()=>document.getElementById(errId).classList.remove('show'),2500); return false; }
+  return true;
+}
+function seleccionarSenNac(num) { toggleLista(votos.senadoresNacional, num, 2, 'err-senadores-nacional'); renderTodo(); }
+function seleccionarSenLoc(num) { toggleLista(votos.senadoresLocal, num, 2, 'err-senadores-local'); renderTodo(); }
+function seleccionarDip(num) { toggleLista(votos.diputados, num, 2, 'err-diputados'); renderTodo(); }
+function seleccionarParlamento(num) {
+  votos.parlamento = votos.parlamento === num ? null : num;
+  renderTodo();
+}
+
+function actualizarResumen() {
+  const p = getPresNombre();
+  const sn = votos.senadoresNacional.length;
+  const sl = votos.senadoresLocal.length;
+  const d = votos.diputados.length;
+  const pa = votos.parlamento;
+  let completadas = 0;
+  if(votos.presidente!==null) completadas++;
+  if(sn>0||sl>0) completadas++;
+  if(d>0) completadas++;
+  if(pa!==null) completadas++;
+
+  document.getElementById('resumen-texto').innerHTML = `
+    <span style="color:${votos.presidente?'#2e7d32':'#CC2229'}">Pres/VP:</span> ${p} &nbsp;|&nbsp;
+    <span>Sen. Nac:</span> ${sn} &nbsp;|&nbsp;
+    <span>Sen. Local:</span> ${sl} &nbsp;|&nbsp;
+    <span>Diputados:</span> ${d} &nbsp;|&nbsp;
+    <span>Parl. Andino:</span> ${pa?'1 partido':'—'}
+  `;
+  const pct = Math.round((completadas/4)*100);
+  document.getElementById('progress-fill').style.width = pct+'%';
+  document.getElementById('progress-label').textContent = completadas+' de 4 secciones completadas';
+}
+
+function getPresNombre() {
+  if(votos.presidente==='BLANCO') return 'Voto en Blanco';
+  if(votos.presidente==='NULO') return 'Voto Nulo';
+  const c = PRESIDENTES.find(x=>x.num===votos.presidente);
+  return c ? c.pres : '—';
+}
+
+function validarDNI(el) {
+  el.value = el.value.replace(/\D/g,'').slice(0,8);
+}
+
+function enviarVoto() {
+  const dni = document.getElementById('dni').value;
+  if(dni.length!==8) { alert('El DNI debe tener exactamente 8 dígitos.'); return; }
+  mostrarModalConfirmar();
+}
+
+function mostrarModalConfirmar() {
+  const p = getPresNombre();
+  const sn = votos.senadoresNacional.map(n=>SENADORES_NAC.find(x=>x.num===n)?.nombre||n).join(', ')||'—';
+  const sl = votos.senadoresLocal.map(n=>SENADORES_LOCAL.find(x=>x.num===n)?.nombre||n).join(', ')||'—';
+  const d = votos.diputados.map(n=>DIPUTADOS.find(x=>x.num===n)?.nombre||n).join(', ')||'—';
+  const pa = votos.parlamento ? (PARLAMENTO.find(x=>x.num===votos.parlamento)?.lista||'—') : '—';
+  document.getElementById('modal-detalle').innerHTML = `
+    <div class="modal-detail-row"><span style="color:#888">Pres/VP</span><span><b>${p}</b></span></div>
+    <div class="modal-detail-row"><span style="color:#888">Sen. Nacional</span><span>${sn}</span></div>
+    <div class="modal-detail-row"><span style="color:#888">Sen. Local</span><span>${sl}</span></div>
+    <div class="modal-detail-row"><span style="color:#888">Diputados</span><span>${d}</span></div>
+    <div class="modal-detail-row"><span style="color:#888">Parl. Andino</span><span>${pa}</span></div>
+  `;
+  document.getElementById('modal-confirmar').classList.add('show');
+}
+
+function cerrarModal() { document.getElementById('modal-confirmar').classList.remove('show'); }
+
+function confirmarVoto() {
+  cerrarModal();
+  const codigo = 'PE-LM-' + Math.random().toString(36).substr(2,6).toUpperCase() + '-' + Date.now().toString().slice(-4);
+  document.getElementById('codigo-verificacion').textContent = codigo;
+  document.getElementById('modal-exito').classList.add('show');
+}
+
+function cerrarExito() {
+  document.getElementById('modal-exito').classList.remove('show');
+  resetearTodo();
+}
+
+function resetearTodo() {
+  votos = { presidente:'BLANCO', senadoresNacional:[], senadoresLocal:[], diputados:[], parlamento:null };
+  ['dni','nombres','apaterno','amaterno','grupo'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  renderTodo();
+}
+
+renderTodo();
+</script>
